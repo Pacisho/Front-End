@@ -78,7 +78,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="/services" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
+                <Link href="/service" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
                   บริการของเรา
                 </Link>
               </li>
