@@ -120,6 +120,21 @@ export default function Navbar() {
               >
                 เข้าสู่ระบบ
               </Link>
+
+              <Link 
+                href="/music" 
+                className="btn" 
+                style={{
+                  borderRadius:'2rem', 
+                  background:'#b700ffff', 
+                  color:'#fff', 
+                  fontSize: '0.9rem', 
+                  padding: '0.375rem 1.25rem',
+                  boxShadow: '0 2px 5px rgba(157, 124, 216, 0.3)'
+                }}
+              >
+                เลือกเพลง
+              </Link>
             </div>
           </div>
         </div>
