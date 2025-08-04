@@ -1,17 +1,21 @@
 'use client';
-import React, { useState } from 'react';
+import { useState } from 'react';
+import Swal from 'sweetalert2';
+import { useRouter } from 'next/navigation';
 
 export default function Register() {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
+    firstname: '',
+    lastname: '',
     username: '',
     password: '',
     title: '',
-    firstName: '',
-    lastName: '',
     address: '',
     gender: '',
     birthDate: '',
-    acceptTerms: false
+    acceptTerms: false,
   });
 
   const [errors, setErrors] = useState({});
@@ -19,51 +23,97 @@ export default function Register() {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
-
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: false }));
-    }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.username.trim()) newErrors.username = true;
-    if (!formData.password.trim()) newErrors.password = true;
-    if (!formData.title) newErrors.title = true;
-    if (!formData.firstName.trim()) newErrors.firstName = true;
-    if (!formData.lastName.trim()) newErrors.lastName = true;
-    if (!formData.address.trim()) newErrors.address = true;
-    if (!formData.gender) newErrors.gender = true;
-    if (!formData.birthDate) newErrors.birthDate = true;
+    const requiredFields = [
+      'username',
+      'password',
+      'title',
+      'firstname',
+      'lastname',
+      'address',
+      'gender',
+      'birthDate',
+    ];
+
+    requiredFields.forEach((field) => {
+      if (!formData[field]) newErrors[field] = true;
+    });
+
     if (!formData.acceptTerms) newErrors.acceptTerms = true;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
-    if (validateForm()) {
-      alert('สมัครสมาชิกสำเร็จ!');
-      console.log('Form data:', formData);
-      setFormData({
-        username: '',
-        password: '',
-        title: '',
-        firstName: '',
-        lastName: '',
-        address: '',
-        gender: '',
-        birthDate: '',
-        acceptTerms: false
+
+    if (!validateForm()) return;
+
+    // สร้าง fullname
+    const fullFormData = {
+      ...formData,
+      fullname: `${formData.firstname} ${formData.lastname}`,
+    };
+
+    try {
+      const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(fullFormData),
       });
-      setSubmitted(false);
-      setErrors({});
+
+      const result = await res.json();
+      console.log(result);
+
+      if (res.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: '<h3>บันทึกข้อมูลเรียบร้อยแล้ว</h3>',
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          router.push('/register');
+        });
+
+        setFormData({
+          firstname: '',
+          lastname: '',
+          username: '',
+          password: '',
+          title: '',
+          address: '',
+          gender: '',
+          birthDate: '',
+          acceptTerms: false,
+        });
+        setSubmitted(false);
+        setErrors({});
+      } else {
+        Swal.fire({
+          title: 'เกิดข้อผิดพลาด',
+          text: result.message || 'ไม่สามารถบันทึกข้อมูลได้',
+          icon: 'error',
+          confirmButtonText: 'ตกลง',
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ข้อผิดพลาดเครือข่าย',
+        text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
+      });
     }
   };
 
@@ -110,37 +160,39 @@ export default function Register() {
             onChange={handleInputChange}
           >
             <option value="">-- คำนำหน้าชื่อ --</option>
-            <option value="mr">นาย</option>
-            <option value="mrs">นาง</option>
-            <option value="miss">นางสาว</option>
+            <option value="นาย">นาย</option>
+            <option value="นาง">นาง</option>
+            <option value="นางสาว">นางสาว</option>
           </select>
           {submitted && errors.title && <div className="text-danger small">กรุณาเลือกคำนำหน้า</div>}
         </div>
 
-        {/* Name and Lastname */}
-        <div className="row mb-3">
-          <div className="col">
-            <input
-              type="text"
-              name="firstName"
-              className={`form-control ${submitted && errors.firstName ? 'border-danger' : ''}`}
-              placeholder="ชื่อ"
-              value={formData.firstName}
-              onChange={handleInputChange}
-            />
-            {submitted && errors.firstName && <div className="text-danger small">กรุณากรอกชื่อ</div>}
-          </div>
-          <div className="col">
-            <input
-              type="text"
-              name="lastName"
-              className={`form-control ${submitted && errors.lastName ? 'border-danger' : ''}`}
-              placeholder="นามสกุล"
-              value={formData.lastName}
-              onChange={handleInputChange}
-            />
-            {submitted && errors.lastName && <div className="text-danger small">กรุณากรอกนามสกุล</div>}
-          </div>
+        {/* Firstname */}
+        <div className="mb-3">
+          <label className="form-label">ชื่อ</label>
+          <input
+            type="text"
+            name="firstname"
+            className={`form-control ${submitted && errors.firstname ? 'border-danger' : ''}`}
+            placeholder="กรอกชื่อ"
+            value={formData.firstname}
+            onChange={handleInputChange}
+          />
+          {submitted && errors.firstname && <div className="text-danger small">กรุณากรอกชื่อ</div>}
+        </div>
+
+        {/* Lastname */}
+        <div className="mb-3">
+          <label className="form-label">นามสกุล</label>
+          <input
+            type="text"
+            name="lastname"
+            className={`form-control ${submitted && errors.lastname ? 'border-danger' : ''}`}
+            placeholder="กรอกนามสกุล"
+            value={formData.lastname}
+            onChange={handleInputChange}
+          />
+          {submitted && errors.lastname && <div className="text-danger small">กรุณากรอกนามสกุล</div>}
         </div>
 
         {/* Address */}
@@ -166,8 +218,8 @@ export default function Register() {
               type="radio"
               name="gender"
               id="male"
-              value="male"
-              checked={formData.gender === 'male'}
+              value="ชาย"
+              checked={formData.gender === 'ชาย'}
               onChange={handleInputChange}
             />
             <label className="form-check-label" htmlFor="male">ชาย</label>
@@ -178,8 +230,8 @@ export default function Register() {
               type="radio"
               name="gender"
               id="female"
-              value="female"
-              checked={formData.gender === 'female'}
+              value="หญิง"
+              checked={formData.gender === 'หญิง'}
               onChange={handleInputChange}
             />
             <label className="form-check-label" htmlFor="female">หญิง</label>
@@ -220,13 +272,13 @@ export default function Register() {
           <button
             type="submit"
             className="btn btn-lg py-3"
-            style={{ 
+            style={{
               background: 'linear-gradient(135deg, #ff0055ff, #325ab7ff)',
               border: 'none',
               borderRadius: '12px',
               color: 'white',
               fontWeight: '600',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
             }}
             onMouseOver={(e) => {
               e.target.style.transform = 'translateY(-2px)';
@@ -238,7 +290,7 @@ export default function Register() {
             }}
           >
             <i className="bi bi-envelope-check me-2"></i>
-           ยืนนันการสมัครสมาชิก
+            ยืนยันการสมัครสมาชิก
           </button>
         </div>
       </div>
