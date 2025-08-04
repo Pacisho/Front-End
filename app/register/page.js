@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
@@ -6,18 +7,19 @@ import { useRouter } from 'next/navigation';
 export default function Register() {
   const router = useRouter();
 
-  const [formData, setFormData] = useState({
+  const initialState = {
     firstname: '',
     lastname: '',
     username: '',
     password: '',
     title: '',
     address: '',
-    gender: '',
-    birthDate: '',
+    sex: '',
+    birthday: '',
     acceptTerms: false,
-  });
+  };
 
+  const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -38,14 +40,12 @@ export default function Register() {
       'firstname',
       'lastname',
       'address',
-      'gender',
-      'birthDate',
+      'sex',
+      'birthday',
     ];
-
     requiredFields.forEach((field) => {
       if (!formData[field]) newErrors[field] = true;
     });
-
     if (!formData.acceptTerms) newErrors.acceptTerms = true;
 
     setErrors(newErrors);
@@ -58,8 +58,7 @@ export default function Register() {
 
     if (!validateForm()) return;
 
-    // สร้าง fullname
-    const fullFormData = {
+    const payload = {
       ...formData,
       fullname: `${formData.firstname} ${formData.lastname}`,
     };
@@ -71,11 +70,10 @@ export default function Register() {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(fullFormData),
+        body: JSON.stringify(payload),
       });
 
       const result = await res.json();
-      console.log(result);
 
       if (res.ok) {
         Swal.fire({
@@ -86,18 +84,7 @@ export default function Register() {
         }).then(() => {
           router.push('/register');
         });
-
-        setFormData({
-          firstname: '',
-          lastname: '',
-          username: '',
-          password: '',
-          title: '',
-          address: '',
-          gender: '',
-          birthDate: '',
-          acceptTerms: false,
-        });
+        setFormData(initialState);
         setSubmitted(false);
         setErrors({});
       } else {
@@ -108,7 +95,7 @@ export default function Register() {
           confirmButtonText: 'ตกลง',
         });
       }
-    } catch (error) {
+    } catch (err) {
       Swal.fire({
         icon: 'error',
         title: 'ข้อผิดพลาดเครือข่าย',
@@ -209,17 +196,17 @@ export default function Register() {
           {submitted && errors.address && <div className="text-danger small">กรุณากรอกที่อยู่</div>}
         </div>
 
-        {/* Gender */}
+        {/* Sex */}
         <div className="mb-3">
           <label className="form-label">เพศ</label>
           <div className="form-check">
             <input
               className="form-check-input"
               type="radio"
-              name="gender"
+              name="sex"
               id="male"
               value="ชาย"
-              checked={formData.gender === 'ชาย'}
+              checked={formData.sex === 'ชาย'}
               onChange={handleInputChange}
             />
             <label className="form-check-label" htmlFor="male">ชาย</label>
@@ -228,28 +215,28 @@ export default function Register() {
             <input
               className="form-check-input"
               type="radio"
-              name="gender"
+              name="sex"
               id="female"
               value="หญิง"
-              checked={formData.gender === 'หญิง'}
+              checked={formData.sex === 'หญิง'}
               onChange={handleInputChange}
             />
             <label className="form-check-label" htmlFor="female">หญิง</label>
           </div>
-          {submitted && errors.gender && <div className="text-danger small">กรุณาเลือกเพศ</div>}
+          {submitted && errors.sex && <div className="text-danger small">กรุณาเลือกเพศ</div>}
         </div>
 
-        {/* Birth Date */}
+        {/* Birthday */}
         <div className="mb-3">
           <label className="form-label">วันเกิด</label>
           <input
             type="date"
-            name="birthDate"
-            className={`form-control ${submitted && errors.birthDate ? 'border-danger' : ''}`}
-            value={formData.birthDate}
+            name="birthday"
+            className={`form-control ${submitted && errors.birthday ? 'border-danger' : ''}`}
+            value={formData.birthday}
             onChange={handleInputChange}
           />
-          {submitted && errors.birthDate && <div className="text-danger small">กรุณาเลือกวันเกิด</div>}
+          {submitted && errors.birthday && <div className="text-danger small">กรุณาเลือกวันเกิด</div>}
         </div>
 
         {/* Accept Terms */}
@@ -268,6 +255,7 @@ export default function Register() {
           {submitted && errors.acceptTerms && <div className="text-danger small">กรุณายอมรับเงื่อนไข</div>}
         </div>
 
+        {/* Submit Button */}
         <div className="d-grid mb-4">
           <button
             type="submit"
