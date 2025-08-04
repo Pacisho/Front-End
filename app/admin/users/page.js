@@ -21,6 +21,7 @@ export default function Page() {
     }
 
     getUsers();
+
     const interval = setInterval(getUsers, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -52,21 +53,31 @@ export default function Page() {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item) => (
-                    <tr key={item.id}>
-                      <td className='text-center'>{item.id}</td>
-                      <td>{item.firstname}</td>
-                      <td>{item.fullname}</td>
-                      <td>{item.lastname}</td>
-                      <td>{item.username}</td>
-                      <td>{item.password}</td>
-                      <td>{item.address}</td>
-                      <td>{item.gender}</td>
-                      <td>{item.birthDate}</td>
-                      <td><Link href="/admin/users/edit/[id]" as={`/admin/users/edit/${item.id}`} className="btn btn-warning">Edit</Link></td>
-                      <td><button className="btn btn-pill btn-danger" type="button"><i className="fa fa-trash"></i> Del</button></td>
-                    </tr>
-                  ))}
+                  {items.map((item) => {
+                    return (
+                      <tr key={item.id}>
+                        <td className='text-center'>{item.id}</td>
+                        <td>{item.firstname}</td>
+                        <td>{item.fullname}</td>
+                        <td>{item.lastname}</td>
+                        <td>{item.username}</td>
+                        <td>{item.password}</td>
+                        <td>{item.address}</td>
+                        <td>{item.sex || item.gender || '-'}</td>
+                        <td>{item.birthday || item.birthDate || '-'}</td>
+                        <td>
+                          <Link href={`/admin/users/edit/${item.id}`} className="btn btn-warning">
+                            Edit
+                          </Link>
+                        </td>
+                        <td>
+                          <button className="btn btn-danger" type="button">
+                            <i className="fa fa-trash"></i> Del
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
