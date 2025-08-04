@@ -120,6 +120,11 @@ export default function Footer() {
                   Other Services
                 </Link>
               </li>
+              <li className="mb-2">
+                <Link href="/admin/users" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
+                  Admin
+                </Link>
+              </li>
             </ul>
           </div>
           
