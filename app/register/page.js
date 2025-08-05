@@ -105,9 +105,22 @@ export default function Register() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="shadow p-5 rounded-4 bg-white mx-auto my-5" style={{ maxWidth: '900px' }}>
-        <h3 className="text-center mb-4">สมัครสมาชิก</h3>
+  <form onSubmit={handleSubmit}>
+   <div className="shadow p-5 rounded-4 bg-white mx-auto my-5" style={{ maxWidth: '900px' }}>
+      <div className="d-flex justify-content-center mb-4">
+        <h3
+          className="py-1 px-3 fw-bold"
+          style={{
+            display: 'inline-block',
+            border: '5px solid',
+            borderImage: 'linear-gradient(to right, red, blue, purple) 1',
+            borderRadius: '50%', // ยังคงใช้ 20% ตามที่คุณต้องการ
+            lineHeight: '1.5', // ช่วยให้รูปทรงดูสมดุลมากขึ้น
+          }}
+        >
+          สมัครสมาชิก
+        </h3>
+      </div>
 
         {/* Username */}
         <div className="mb-3">
@@ -270,7 +283,7 @@ export default function Register() {
             }}
             onMouseOver={(e) => {
               e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.3)';
+              e.target.style.boxShadow = '0 8px 20px rgba(0, 4, 255, 0.3)';
             }}
             onMouseOut={(e) => {
               e.target.style.transform = 'translateY(0)';
