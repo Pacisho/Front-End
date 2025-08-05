@@ -20,45 +20,66 @@ export default function Footer() {
               </p>
             </div>
             <div className="d-flex gap-3 mb-3">
-              <a href="#" className="social-icon" style={{
-                color: '#f00068ff', 
-                background: 'rgba(210, 145, 188, 0.1)', 
-                width: '36px', 
-                height: '36px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                borderRadius: '50%',
-                transition: 'all 0.3s'
-              }}>
-                <i className="bi bi-instagram"></i>
-              </a>
-              <a href="#" className="social-icon" style={{
-                color: '#0004ffff', 
-                background: 'rgba(157, 124, 216, 0.1)', 
-                width: '36px', 
-                height: '36px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                borderRadius: '50%',
-                transition: 'all 0.3s'
-              }}>
-                <i className="bi bi-facebook"></i>
-              </a>
-              <a href="#" className="social-icon" style={{
-                color: '#007fceff', 
-                background: 'rgba(91, 174, 158, 0.1)', 
-                width: '36px', 
-                height: '36px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                borderRadius: '50%',
-                transition: 'all 0.3s'
-              }}>
-                <i className="bi bi-twitter"></i>
-              </a>
+              <Link
+  href="https://www.instagram.com/"  // เปลี่ยนเป็นลิงก์จริง
+  target="_blank"
+  rel="noopener noreferrer"
+  className="social-icon"
+  style={{
+    color: '#ff0033ff',
+    background: 'rgba(91, 174, 158, 0.1)',
+    width: '36px',
+    height: '36px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '50%',
+    transition: 'all 0.3s',
+    textDecoration: 'none',
+  }}
+>
+  <i className="bi bi-instagram"></i>
+</Link>
+              <Link
+  href="https://www.facebook.com/"  // เปลี่ยนเป็นลิงก์จริง
+  target="_blank"
+  rel="noopener noreferrer"
+  className="social-icon"
+  style={{
+    color: '#0008ffff',
+    background: 'rgba(91, 174, 158, 0.1)',
+    width: '36px',
+    height: '36px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '50%',
+    transition: 'all 0.3s',
+    textDecoration: 'none',
+  }}
+>
+  <i className="bi bi-facebook"></i>
+</Link>
+              <Link
+  href="https://www.youtube.com/"  // เปลี่ยนเป็นลิงก์จริง
+  target="_blank"
+  rel="noopener noreferrer"
+  className="social-icon"
+  style={{
+    color: '#f30000ff',
+    background: 'rgba(91, 174, 158, 0.1)',
+    width: '36px',
+    height: '36px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '50%',
+    transition: 'all 0.3s',
+    textDecoration: 'none',
+  }}
+>
+  <i className="bi bi-youtube"></i>
+</Link>
             </div>
           </div>
           
