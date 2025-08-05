@@ -101,22 +101,22 @@ export default function Footer() {
             </h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <Link href="/service/web" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
+                <Link href="/components/web-development" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
                   Web Development
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="/service/app" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
+                <Link href="/components/app-development" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
                   App Development
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="/service/design" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
+                <Link href="/components/ux-design" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
                   UI/UX Design
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="/service/other" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
+                <Link href="/components/other-services" className="text-decoration-none" style={{color: '#666', fontSize: '0.9rem', transition: 'color 0.3s'}}>
                   Other Services
                 </Link>
               </li>
