@@ -40,10 +40,10 @@ export default function Contact() {
     address: "594/2 หมู่ 3 ต.เวียง อ.ฝาง จ.เชียงใหม่ 50110 สถานีวิทยุกระจายเสียงแห่งประเทศไทย จังหวัดเชียงใหม่",
     workingHours: "จันทร์-ศุกร์: 8:00 - 22:00 น.",
     socialMedia: [
-      { name: "Instagram", icon: "bi-instagram", color: "#ff0066ff", link: "#" },
-      { name: "Facebook", icon: "bi-facebook", color: "#0008e4ff", link: "#" },
-      { name: "Line", icon: "bi-line", color: "#12b800ff", link: "#" },
-      { name: "TikTok", icon: "bi-tiktok", color: "#000000ff", link: "#" }
+      { name: "Instagram", icon: "bi-instagram", color: "#ff0066ff", link: "https://www.instagram.com/" },
+      { name: "Facebook", icon: "bi-facebook", color: "#0008e4ff", link: "https://www.facebook.com/" },
+      { name: "Line", icon: "bi-youtube", color: "#ed0000ff", link: "https://www.youtube.com/" },
+      { name: "TikTok", icon: "bi-github", color: "#000000ff", link: "https://github.com/Pacisho" }
     ],
     faq: [
       { 
