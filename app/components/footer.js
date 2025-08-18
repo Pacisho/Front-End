@@ -197,13 +197,13 @@ export default function Footer() {
             <div className="col-md-6 text-center text-md-end">
               <ul className="list-inline mb-0">
                 <li className="list-inline-item">
-                  <a href="#" className="text-muted text-decoration-none" style={{fontSize: '0.85rem'}}>Privacy Policy</a>
+                  <Link href="#" className="text-muted text-decoration-none" style={{fontSize: '0.85rem'}}>Privacy Policy</Link>
                 </li>
                 <li className="list-inline-item">
                   <span className="text-muted mx-2">•</span>
                 </li>
                 <li className="list-inline-item">
-                  <a href="#" className="text-muted text-decoration-none" style={{fontSize: '0.85rem'}}>Terms of Service</a>
+                  <Link href="#" className="text-muted text-decoration-none" style={{fontSize: '0.85rem'}}>Terms of Service</Link>
                 </li>
               </ul>
             </div>
