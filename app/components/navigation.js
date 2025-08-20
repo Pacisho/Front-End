@@ -122,7 +122,7 @@ export default function Navbar() {
               </Link>
 
               <Link 
-                href="/music" 
+                href="/signout" 
                 className="btn" 
                 style={{
                   borderRadius:'2rem', 
@@ -133,7 +133,7 @@ export default function Navbar() {
                   boxShadow: '0 2px 5px rgba(157, 124, 216, 0.3)'
                 }}
               >
-                เลือกเพลง
+                ออกจากระบบ
               </Link>
             </div>
           </div>
