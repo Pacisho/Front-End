@@ -2,26 +2,38 @@
 import Link from "next/link";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editUser, setEditUser] = useState(null);
+  const router = useRouter();
 
+  // ✅ ตรวจสอบ token
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/signin");
+    }
+  }, []);
+
+  // ✅ โหลดข้อมูลผู้ใช้
   const getUsers = async () => {
     try {
       const res = await fetch("/api/users", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      if (!res.ok) {
-        console.error("Failed to fetch data");
-        return;
-      }
+      if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      setItems(data);
+      console.log("data", data); // ตรวจสอบรูปแบบ
+      setItems(Array.isArray(data) ? data : data.users || []);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
+      setLoading(false);
     }
   };
 
@@ -55,21 +67,17 @@ export default function Page() {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://itdev.cmtc.ac.th:3000/api/users/${id}`,
+            `https://backend-nextjs-virid.vercel.app/api/users/${id}`,
             { method: "DELETE" }
           );
-
-          if (response.ok) {
-            Swal.fire({
-              icon: "success",
-              title: "ลบสำเร็จ!",
-              text: "ลบข้อมูลผู้ใช้เรียบร้อยแล้ว",
-              confirmButtonColor: "#4e73df",
-            });
-            getUsers();
-          } else {
-            throw new Error("Failed to delete user");
-          }
+          if (!response.ok) throw new Error("Delete failed");
+          Swal.fire({
+            icon: "success",
+            title: "ลบสำเร็จ!",
+            text: "ลบข้อมูลผู้ใช้เรียบร้อยแล้ว",
+            confirmButtonColor: "#4e73df",
+          });
+          getUsers();
         } catch (error) {
           console.error("Error deleting user:", error);
           Swal.fire({
@@ -85,15 +93,13 @@ export default function Page() {
 
   const handleSave = async () => {
     if (!editUser) return;
-
     try {
       const res = await fetch("/api/users", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editUser),
       });
-
-      if (!res.ok) throw new Error("Failed to update user");
+      if (!res.ok) throw new Error("Update failed");
 
       Swal.fire({
         icon: "success",
@@ -114,10 +120,18 @@ export default function Page() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="text-center p-5">
+        <h3>Loading...</h3>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="container">
-        <div className="card">
+        <div className="card mt-4">
           <div className="card-header">Users List</div>
           <div className="card-body">
             <table className="table table-striped table-hover">
@@ -136,49 +150,41 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {items.length === 0 ? (
-                  <tr>
-                    <td colSpan="10" className="text-center">
-                      กำลังโหลดข้อมูล...
+                {items.map((item) => (
+                  <tr key={item.id}>
+                    <td className="text-center">{item.id}</td>
+                    <td>{item.firstname}</td>
+                    <td>{item.fullname}</td>
+                    <td>{item.lastname}</td>
+                    <td>{item.username}</td>
+                    <td>{item.address}</td>
+                    <td>{item.sex}</td>
+                    <td>{item.birthday}</td>
+                    <td>
+                      <button
+                        className="btn btn-warning btn-sm"
+                        onClick={() => openEditModal(item)}
+                      >
+                        Edit
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        <i className="fa fa-trash"></i> ลบ
+                      </button>
                     </td>
                   </tr>
-                ) : (
-                  items.map((item) => (
-                    <tr key={item.id}>
-                      <td className="text-center">{item.id}</td>
-                      <td>{item.firstname}</td>
-                      <td>{item.fullname}</td>
-                      <td>{item.lastname}</td>
-                      <td>{item.username}</td>
-                      <td>{item.address}</td>
-                      <td>{item.sex}</td>
-                      <td>{item.birthday}</td>
-                      <td>
-                        <button
-                          className="btn btn-warning btn-sm"
-                          onClick={() => openEditModal(item)}
-                        >
-                          Edit
-                        </button>
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => handleDelete(item.id)}
-                        >
-                          <i className="fa fa-trash"></i> ลบ
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                ))}
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal แก้ไขข้อมูล */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -200,7 +206,6 @@ export default function Page() {
                   }
                 />
               </div>
-
               <div className="mb-3">
                 <label>Fullname</label>
                 <input
@@ -212,7 +217,6 @@ export default function Page() {
                   }
                 />
               </div>
-
               <div className="mb-3">
                 <label>Lastname</label>
                 <input
@@ -224,7 +228,6 @@ export default function Page() {
                   }
                 />
               </div>
-
               <div className="mb-3">
                 <label>Username</label>
                 <input
@@ -236,7 +239,6 @@ export default function Page() {
                   }
                 />
               </div>
-
               <div className="mb-3">
                 <label>Address</label>
                 <input
@@ -248,7 +250,6 @@ export default function Page() {
                   }
                 />
               </div>
-
               <div className="mb-3">
                 <label>Sex</label>
                 <select
@@ -264,7 +265,6 @@ export default function Page() {
                   <option value="อื่นๆ">อื่นๆ</option>
                 </select>
               </div>
-
               <div className="mb-3">
                 <label>Birthday</label>
                 <input
@@ -276,7 +276,6 @@ export default function Page() {
                   }
                 />
               </div>
-
               <div className="text-end">
                 <button
                   type="button"
@@ -294,6 +293,7 @@ export default function Page() {
         </div>
       )}
 
+      {/* Modal CSS */}
       <style jsx>{`
         .modal-overlay {
           position: fixed;
