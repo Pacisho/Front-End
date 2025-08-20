@@ -1,6 +1,6 @@
 export async function GET() {
   try {
-    const response = await fetch("http://itdev.cmtc.ac.th:3000/api/users", {
+    const response = await fetch("https://backend-nextjs-virid.vercel.app/api/users", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
