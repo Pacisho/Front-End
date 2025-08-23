@@ -1,51 +1,62 @@
-
-'use client';
-import { useState } from 'react';
-import Swal from 'sweetalert2';
-import { useRouter } from 'next/navigation';
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 export default function Register() {
   const router = useRouter();
-
-  const initialState = {
-    firstname: '',
-    lastname: '',
-    username: '',
-    password: '',
-    title: '',
-    address: '',
-    sex: '',
-    birthday: '',
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    title: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    gender: "",
+    birthDate: "",
     acceptTerms: false,
-  };
+  });
 
-  const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+
+  const token = localStorage.getItem("token");
+  if (token) {
+    router.push("/admin/users");
+    return;
+  }
+
+  const titleOptions = [
+    { value: "", label: "เลือกคำนำหน้า" },
+    { value: "นาย", label: "นาย" },
+    { value: "นาง", label: "นาง" },
+    { value: "นางสาว", label: "นางสาว" },
+    { value: "ดร.", label: "ดร." },
+    { value: "ศาสตราจารย์", label: "ศาสตราจารย์" },
+  ];
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: false }));
+    }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    const requiredFields = [
-      'username',
-      'password',
-      'title',
-      'firstname',
-      'lastname',
-      'address',
-      'sex',
-      'birthday',
-    ];
-    requiredFields.forEach((field) => {
-      if (!formData[field]) newErrors[field] = true;
-    });
+    if (!formData.username.trim()) newErrors.username = true;
+    if (!formData.password.trim()) newErrors.password = true;
+    if (!formData.title) newErrors.title = true;
+    if (!formData.firstName.trim()) newErrors.firstName = true;
+    if (!formData.lastName.trim()) newErrors.lastName = true;
+    if (!formData.address.trim()) newErrors.address = true;
+    if (!formData.gender) newErrors.gender = true;
+    if (!formData.birthDate) newErrors.birthDate = true;
     if (!formData.acceptTerms) newErrors.acceptTerms = true;
 
     setErrors(newErrors);
@@ -58,243 +69,287 @@ export default function Register() {
 
     if (!validateForm()) return;
 
-    const payload = {
-      ...formData,
-      fullname: `${formData.firstname} ${formData.lastname}`,
-    };
-
     try {
-      const res = await fetch('https://backend-nextjs-virid.vercel.app/api/users', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        "https://backend-nextjs-virid.vercel.app/api/users",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            username: formData.username,
+            password: formData.password,
+            firstname: formData.title,
+            fullname: formData.firstName,
+            lastname: formData.lastName,
+            address: formData.address,
+            sex: formData.gender,
+            birthday: formData.birthDate,
+          }),
+        }
+      );
 
       const result = await res.json();
 
       if (res.ok) {
         Swal.fire({
-          icon: 'success',
-          title: '<h3>บันทึกข้อมูลเรียบร้อยแล้ว</h3>',
-          showConfirmButton: false,
+          icon: "success",
+          title: "สมัครสมาชิกสำเร็จ!",
+          text: "ข้อมูลถูกบันทึกเรียบร้อยแล้ว",
           timer: 2000,
+          showConfirmButton: false,
         }).then(() => {
-          router.push('/register');
+          router.push("/login");
         });
-        setFormData(initialState);
+
+        setFormData({
+          username: "",
+          password: "",
+          title: "",
+          firstName: "",
+          lastName: "",
+          address: "",
+          gender: "",
+          birthDate: "",
+          acceptTerms: false,
+        });
         setSubmitted(false);
         setErrors({});
       } else {
         Swal.fire({
-          title: 'เกิดข้อผิดพลาด',
-          text: result.message || 'ไม่สามารถบันทึกข้อมูลได้',
-          icon: 'error',
-          confirmButtonText: 'ตกลง',
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: result.message || "ไม่สามารถสมัครสมาชิกได้",
         });
       }
-    } catch (err) {
+    } catch (error) {
       Swal.fire({
-        icon: 'error',
-        title: 'ข้อผิดพลาดเครือข่าย',
-        text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
+        icon: "error",
+        title: "ข้อผิดพลาดของระบบ",
+        text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
       });
+      console.error(error);
     }
   };
 
+  const getInputClassName = (field) =>
+    submitted && errors[field] ? "form-control border-danger" : "form-control";
+
+  const getSelectClassName = (field) =>
+    submitted && errors[field] ? "form-select border-danger" : "form-select";
+
   return (
-  <form onSubmit={handleSubmit}>
-   <div className="shadow p-5 rounded-4 bg-white mx-auto my-5" style={{ maxWidth: '900px' }}>
-      <div className="d-flex justify-content-center mb-4">
-        <h3
-          className="py-1 px-3 fw-bold"
-          style={{
-            display: 'inline-block',
-            border: '5px solid',
-            borderImage: 'linear-gradient(to right, red, blue, purple) 1',
-            borderRadius: '50%', // ยังคงใช้ 20% ตามที่คุณต้องการ
-            lineHeight: '1.5', // ช่วยให้รูปทรงดูสมดุลมากขึ้น
-          }}
-        >
-          สมัครสมาชิก
-        </h3>
-      </div>
+    <div className="container my-5">
+      <div className="row justify-content-center">
+        <div className="col-lg-8 col-xl-6">
+          <div className="card border-0 shadow-lg rounded-4">
+            <div className="card-body p-5">
+              <div className="text-center mb-4">
+                <h2 className="fw-bold mb-3" style={{ color: "#eb003fff" }}>
+                  สมัครสมาชิก
+                </h2>
+              </div>
 
-        {/* Username */}
-        <div className="mb-3">
-          <label className="form-label">ชื่อผู้ใช้</label>
-          <input
-            type="text"
-            name="username"
-            className={`form-control ${submitted && errors.username ? 'border-danger' : ''}`}
-            placeholder="กรอกชื่อผู้ใช้"
-            value={formData.username}
-            onChange={handleInputChange}
-          />
-          {submitted && errors.username && <div className="text-danger small">กรุณากรอกชื่อผู้ใช้</div>}
-        </div>
+              <form onSubmit={handleSubmit}>
+                {/* Username & Password */}
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">ชื่อผู้ใช้ *</label>
+                  <input
+                    name="username"
+                    className={getInputClassName("username")}
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    placeholder="ชื่อผู้ใช้"
+                  />
+                  {submitted && errors.username && (
+                    <div className="text-danger small">กรุณากรอกชื่อผู้ใช้</div>
+                  )}
+                </div>
 
-        {/* Password */}
-        <div className="mb-3">
-          <label className="form-label">รหัสผ่าน</label>
-          <input
-            type="password"
-            name="password"
-            className={`form-control ${submitted && errors.password ? 'border-danger' : ''}`}
-            placeholder="กรอกรหัสผ่าน"
-            value={formData.password}
-            onChange={handleInputChange}
-          />
-          {submitted && errors.password && <div className="text-danger small">กรุณากรอกรหัสผ่าน</div>}
-        </div>
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">รหัสผ่าน *</label>
+                  <input
+                    type="password"
+                    name="password"
+                    className={getInputClassName("password")}
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="รหัสผ่าน"
+                  />
+                  {submitted && errors.password && (
+                    <div className="text-danger small">กรุณากรอกรหัสผ่าน</div>
+                  )}
+                </div>
 
-        {/* Title */}
-        <div className="mb-3">
-          <label className="form-label">คำนำหน้าชื่อ</label>
-          <select
-            name="title"
-            className={`form-select ${submitted && errors.title ? 'border-danger' : ''}`}
-            value={formData.title}
-            onChange={handleInputChange}
-          >
-            <option value="">-- คำนำหน้าชื่อ --</option>
-            <option value="นาย">นาย</option>
-            <option value="นาง">นาง</option>
-            <option value="นางสาว">นางสาว</option>
-          </select>
-          {submitted && errors.title && <div className="text-danger small">กรุณาเลือกคำนำหน้า</div>}
-        </div>
+                {/* Title */}
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">คำนำหน้า *</label>
+                  <select
+                    name="title"
+                    className={getSelectClassName("title")}
+                    value={formData.title}
+                    onChange={handleInputChange}
+                  >
+                    {titleOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  {submitted && errors.title && (
+                    <div className="text-danger small">กรุณาเลือกคำนำหน้า</div>
+                  )}
+                </div>
 
-        {/* Firstname */}
-        <div className="mb-3">
-          <label className="form-label">ชื่อ</label>
-          <input
-            type="text"
-            name="firstname"
-            className={`form-control ${submitted && errors.firstname ? 'border-danger' : ''}`}
-            placeholder="กรอกชื่อ"
-            value={formData.firstname}
-            onChange={handleInputChange}
-          />
-          {submitted && errors.firstname && <div className="text-danger small">กรุณากรอกชื่อ</div>}
-        </div>
+                {/* First & Last Name */}
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label fw-semibold">ชื่อ *</label>
+                    <input
+                      name="firstName"
+                      className={getInputClassName("firstName")}
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      placeholder="ชื่อจริง"
+                    />
+                    {submitted && errors.firstName && (
+                      <div className="text-danger small">กรุณากรอกชื่อ</div>
+                    )}
+                  </div>
 
-        {/* Lastname */}
-        <div className="mb-3">
-          <label className="form-label">นามสกุล</label>
-          <input
-            type="text"
-            name="lastname"
-            className={`form-control ${submitted && errors.lastname ? 'border-danger' : ''}`}
-            placeholder="กรอกนามสกุล"
-            value={formData.lastname}
-            onChange={handleInputChange}
-          />
-          {submitted && errors.lastname && <div className="text-danger small">กรุณากรอกนามสกุล</div>}
-        </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label fw-semibold">นามสกุล *</label>
+                    <input
+                      name="lastName"
+                      className={getInputClassName("lastName")}
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      placeholder="นามสกุล"
+                    />
+                    {submitted && errors.lastName && (
+                      <div className="text-danger small">กรุณากรอกนามสกุล</div>
+                    )}
+                  </div>
+                </div>
 
-        {/* Address */}
-        <div className="mb-3">
-          <label className="form-label">ที่อยู่</label>
-          <textarea
-            name="address"
-            className={`form-control ${submitted && errors.address ? 'border-danger' : ''}`}
-            rows={3}
-            placeholder="กรอกที่อยู่..."
-            value={formData.address}
-            onChange={handleInputChange}
-          />
-          {submitted && errors.address && <div className="text-danger small">กรุณากรอกที่อยู่</div>}
-        </div>
+                {/* Address */}
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">ที่อยู่ *</label>
+                  <textarea
+                    name="address"
+                    className={getInputClassName("address")}
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    rows="3"
+                  />
+                  {submitted && errors.address && (
+                    <div className="text-danger small">กรุณากรอกที่อยู่</div>
+                  )}
+                </div>
 
-        {/* Sex */}
-        <div className="mb-3">
-          <label className="form-label">เพศ</label>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="radio"
-              name="sex"
-              id="male"
-              value="ชาย"
-              checked={formData.sex === 'ชาย'}
-              onChange={handleInputChange}
-            />
-            <label className="form-check-label" htmlFor="male">ชาย</label>
+                {/* Gender */}
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">เพศ *</label>
+                  <div className="d-flex gap-4 mt-2">
+                    {["ชาย", "หญิง", "อื่นๆ"].map((g) => (
+                      <div className="form-check" key={g}>
+                        <input
+                          type="radio"
+                          id={g}
+                          name="gender"
+                          value={g}
+                          checked={formData.gender === g}
+                          onChange={handleInputChange}
+                          className="form-check-input"
+                        />
+                        <label htmlFor={g} className="form-check-label">
+                          {g === "ชาย"
+                            ? "ชาย"
+                            : g === "หญิง"
+                            ? "หญิง"
+                            : "อื่นๆ"}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                  {submitted && errors.gender && (
+                    <div className="text-danger small">กรุณาเลือกเพศ</div>
+                  )}
+                </div>
+
+                {/* Birth Date */}
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">วันเกิด *</label>
+                  <input
+                    type="date"
+                    name="birthDate"
+                    className={getInputClassName("birthDate")}
+                    value={formData.birthDate}
+                    onChange={handleInputChange}
+                  />
+                  {submitted && errors.birthDate && (
+                    <div className="text-danger small">กรุณาเลือกวันเกิด</div>
+                  )}
+                </div>
+
+                {/* Terms */}
+                <div className="mb-4 form-check">
+                  <input
+                    type="checkbox"
+                    name="acceptTerms"
+                    checked={formData.acceptTerms}
+                    onChange={handleInputChange}
+                    className="form-check-input"
+                    id="acceptTerms"
+                  />
+                  <label htmlFor="acceptTerms" className="form-check-label">
+                    ยอมรับ{" "}
+                    <a href="#" className="text-decoration-none ms-1">
+                      ข้อตกลงและเงื่อนไข
+                    </a>{" "}
+                    <span className="text-danger">*</span>
+                  </label>
+                  {submitted && errors.acceptTerms && (
+                    <div className="text-danger small">กรุณายอมรับข้อตกลง</div>
+                  )}
+                </div>
+
+                {/* Submit */}
+                <div className="d-grid">
+                  <button
+                    type="submit"
+                    className="btn btn-lg py-3"
+                    style={{
+                      background: "linear-gradient(135deg, #d20038ff, #42009fff)",
+                      border: "none",
+                      borderRadius: "12px",
+                      color: "white",
+                      fontWeight: "600",
+                    }}
+                  >
+                    สมัครสมาชิก
+                  </button>
+                </div>
+              </form>
+
+              <div className="text-center mt-4">
+                <p className="text-muted">
+                  มีบัญชีอยู่แล้ว?
+                  <a
+                    href="/login"
+                    className="ms-1"
+                    style={{ color: "#0000ffff" }}
+                  >
+                    เข้าสู่ระบบ
+                  </a>
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="radio"
-              name="sex"
-              id="female"
-              value="หญิง"
-              checked={formData.sex === 'หญิง'}
-              onChange={handleInputChange}
-            />
-            <label className="form-check-label" htmlFor="female">หญิง</label>
-          </div>
-          {submitted && errors.sex && <div className="text-danger small">กรุณาเลือกเพศ</div>}
-        </div>
-
-        {/* Birthday */}
-        <div className="mb-3">
-          <label className="form-label">วันเกิด</label>
-          <input
-            type="date"
-            name="birthday"
-            className={`form-control ${submitted && errors.birthday ? 'border-danger' : ''}`}
-            value={formData.birthday}
-            onChange={handleInputChange}
-          />
-          {submitted && errors.birthday && <div className="text-danger small">กรุณาเลือกวันเกิด</div>}
-        </div>
-
-        {/* Accept Terms */}
-        <div className="form-check mb-3">
-          <input
-            className="form-check-input"
-            type="checkbox"
-            id="acceptTerms"
-            name="acceptTerms"
-            checked={formData.acceptTerms}
-            onChange={handleInputChange}
-          />
-          <label className="form-check-label" htmlFor="acceptTerms">
-            ยอมรับเงื่อนไข
-          </label>
-          {submitted && errors.acceptTerms && <div className="text-danger small">กรุณายอมรับเงื่อนไข</div>}
-        </div>
-
-        {/* Submit Button */}
-        <div className="d-grid mb-4">
-          <button
-            type="submit"
-            className="btn btn-lg py-3"
-            style={{
-              background: 'linear-gradient(135deg, #ff0055ff, #325ab7ff)',
-              border: 'none',
-              borderRadius: '12px',
-              color: 'white',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseOver={(e) => {
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 8px 20px rgba(0, 4, 255, 0.3)';
-            }}
-            onMouseOut={(e) => {
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = 'none';
-            }}
-          >
-            <i className="bi bi-envelope-check me-2"></i>
-            ยืนยันการสมัครสมาชิก
-          </button>
         </div>
       </div>
-    </form>
+    </div>
   );
 }
