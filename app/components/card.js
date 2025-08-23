@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -47,7 +46,16 @@ export default function Card() {
 
   return (
     <div className="container my-5">
-      <h3 className="mb-4 text-center" style={{ color: '#2e2e2eff', fontWeight: '600', fontFamily: 'Poppins, sans-serif' }}>Our Collection</h3>
+      <h3
+        className="mb-4 text-center"
+        style={{
+          color: '#2e2e2eff',
+          fontWeight: '600',
+          fontFamily: 'Poppins, sans-serif'
+        }}
+      >
+        Our Collection
+      </h3>
       <div className="row g-4 justify-content-center">
         {cards.map((card, index) => (
           <div className="col-md-4 mb-4" key={index}>
@@ -60,7 +68,10 @@ export default function Card() {
                 overflow: 'hidden',
                 transition: 'transform 0.3s, box-shadow 0.3s',
                 transform: hoveredCard === index ? 'translateY(-5px)' : 'none',
-                boxShadow: hoveredCard === index ? '0 10px 20px rgba(0,0,0,0.1)' : '0 4px 6px rgba(0,0,0,0.05)'
+                boxShadow:
+                  hoveredCard === index
+                    ? '0 10px 20px rgba(0,0,0,0.1)'
+                    : '0 4px 6px rgba(0,0,0,0.05)'
               }}
               onMouseEnter={() => handleMouseEnter(index)}
               onMouseLeave={handleMouseLeave}
@@ -81,7 +92,8 @@ export default function Card() {
                     width: '100%',
                     objectFit: 'cover',
                     transition: 'transform 0.5s',
-                    transform: hoveredCard === index ? 'scale(1.05)' : 'scale(1)'
+                    transform:
+                      hoveredCard === index ? 'scale(1.05)' : 'scale(1)'
                   }}
                 />
               </div>
@@ -92,31 +104,44 @@ export default function Card() {
                   padding: '1.5rem 1rem'
                 }}
               >
-                <h5 style={{ color: card.titleColor, fontFamily: 'Poppins, sans-serif', fontWeight: '500', marginBottom: '0.5rem' }}>
+                <h5
+                  style={{
+                    color: card.titleColor,
+                    fontFamily: 'Poppins, sans-serif',
+                    fontWeight: '500',
+                    marginBottom: '0.5rem'
+                  }}
+                >
                   {card.title}
                 </h5>
-                <p className="card-text" style={{ color: '#888', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                <p
+                  className="card-text"
+                  style={{
+                    color: '#888',
+                    fontSize: '0.9rem',
+                    marginBottom: '1rem'
+                  }}
+                >
                   {card.description}
                 </p>
-                <Link href={card.link} legacyBehavior>
-                  <a
-                    className="btn btn-sm"
-                    style={{
-                      background: 'white',
-                      color: card.buttonColor,
-                      borderRadius: '2rem',
-                      padding: '0.25rem 1rem',
-                      fontSize: '0.85rem',
-                      border: `1px solid ${card.buttonColor}`,
-                      transition: 'all 0.3s',
-                      opacity: hoveredCard === index ? 1 : 0.8,
-                      cursor: 'pointer',
-                      textDecoration: 'none',
-                      display: 'inline-block'
-                    }}
-                  >
-                    เพิ่มเติม
-                  </a>
+                <Link
+                  href={card.link}
+                  className="btn btn-sm"
+                  style={{
+                    background: 'white',
+                    color: card.buttonColor,
+                    borderRadius: '2rem',
+                    padding: '0.25rem 1rem',
+                    fontSize: '0.85rem',
+                    border: `1px solid ${card.buttonColor}`,
+                    transition: 'all 0.3s',
+                    opacity: hoveredCard === index ? 1 : 0.8,
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    display: 'inline-block'
+                  }}
+                >
+                  เพิ่มเติม
                 </Link>
               </div>
             </div>
