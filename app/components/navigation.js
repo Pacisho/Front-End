@@ -1,141 +1,196 @@
+"use client";
 
-'use client';
-
-import Link from 'next/link';
-import { useState } from 'react';
+import Link from "next/link";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [token, setToken] = useState(null); // เก็บ token
 
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    // ตรวจสอบ token ใน localStorage
+    const savedToken = localStorage.getItem("token");
+    setToken(savedToken);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // ลบ token
+    setToken(null);
+    window.location.href = "/"; // เปลี่ยนเส้นทางหลัง logout
+  };
+
   return (
-    <nav className="navbar navbar-expand-lg shadow-sm sticky-top" style={{background:'#fff'}}>
+    <nav
+      className="navbar navbar-expand-lg shadow-sm sticky-top"
+      style={{ background: "#fff" }}
+    >
       <div className="container py-2">
         <Link href="/" className="navbar-brand d-flex align-items-center">
-          <img src="/a13.png" alt="Logo" width="30" height="30" className="me-2 rounded-circle" />
-          <span style={{color:'#000000ff', fontWeight:'600', fontFamily:'Poppins, sans-serif'}}>Attack All Around</span>
+          <img
+            src="/a13.png"
+            alt="Logo"
+            width="37"
+            height="37"
+            className="me-2 rounded-circle"
+          />
+          <span style={{ color: "#000000ff", fontWeight: "600" }}>
+            Attack All Around
+          </span>
         </Link>
-        
-        <button 
-          className="navbar-toggler" 
-          type="button" 
+
+        <button
+          className="navbar-toggler"
+          type="button"
           onClick={toggleNavbar}
-          aria-controls="navbarNav" 
-          aria-expanded={isOpen ? "true" : "false"} 
+          aria-controls="navbarNav"
+          aria-expanded={isOpen ? "true" : "false"}
           aria-label="Toggle navigation"
-          style={{border: 'none', boxShadow: 'none'}}
+          style={{ border: "none", boxShadow: "none" }}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        
-        <div className={`collapse navbar-collapse ${isOpen ? 'show' : ''}`} id="navbarNav">
-          <ul className="navbar-nav mx-auto">
+
+        <div
+          className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}
+          id="navbarNav"
+        >
+          <ul className="navbar-nav mx-auto flex-nowrap">
             <li className="nav-item mx-2">
-              <Link href="/" className="nav-link position-relative" style={{color:'#000000ff', fontWeight:'500'}}>
+              <Link
+                href="/"
+                className="nav-link"
+                style={{
+                  color: "#000000ff",
+                  fontWeight: "500",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 หน้าแรก
               </Link>
             </li>
             <li className="nav-item mx-2">
-              <Link href="/about" className="nav-link" style={{color:'#000000ff'}}>เกี่ยวกับเรา</Link>
+              <Link
+                href="/about"
+                className="nav-link"
+                style={{ color: "#000000ff",
+                   fontWeight: "500",
+                   whiteSpace: "nowrap" }}
+              >
+                เกี่ยวกับเรา
+              </Link>
             </li>
-            <li className="nav-item dropdown mx-2">
-              <Link 
-                className="nav-link" 
-                href="/service" 
-                role="button" 
-                aria-expanded="false" 
-                style={{color:'#000000ff'}}
+            <li className="nav-item mx-2">
+              <Link
+                href="/service"
+                className="nav-link"
+                style={{ color: "#000000ff",
+                   fontWeight: "500",
+                   whiteSpace: "nowrap" }}
               >
                 บริการของเรา
               </Link>
             </li>
             <li className="nav-item mx-2">
-              <Link href="/contact" className="nav-link" style={{color:'#000000ff'}}>ติดต่อเรา</Link>
+              <Link
+                href="/contact"
+                className="nav-link"
+                style={{ color: "#000000ff",
+                   fontWeight: "500",
+                   whiteSpace: "nowrap" }}
+              >
+                ติดต่อเรา
+              </Link>
             </li>
           </ul>
-          
-          <div className="d-flex align-items-center gap-3 flex-wrap justify-content-center mt-3 mt-lg-0">
+
+          <div className="d-flex align-items-center gap-2 ms-auto">
             <form className="d-flex" role="search">
               <div className="input-group">
-                <input 
-                  className="form-control" 
-                  type="search" 
-                  placeholder="ค้นหาข้อมูล..." 
-                  aria-label="Search" 
+                <input
+                  className="form-control"
+                  type="search"
+                  placeholder="ค้นหา..."
+                  aria-label="Search"
                   style={{
-                    borderRadius:'2rem 0 0 2rem', 
-                    background:'#ffffffff', 
-                    border: '1px solid #eee', 
-                    borderRight: 'none',
-                    fontSize: '0.9rem'
-                  }} 
+                    borderRadius: "2rem 0 0 2rem",
+                    background: "#f8f9fa",
+                    border: "1px solid #eee",
+                    borderRight: "none",
+                    fontSize: "0.9rem",
+                  }}
                 />
-                <button 
-                  className="btn" 
-                  type="submit" 
+                <button
+                  className="btn"
+                  type="submit"
                   style={{
-                    borderRadius:'0 2rem 2rem 0', 
-                    background:'#0094ceff', 
-                    color:'#fff', 
-                    fontSize: '0.9rem', 
-                    padding: '0.375rem 1rem',
-                    border: '1px solid #0094ceff'
+                    borderRadius: "0 2rem 2rem 0",
+                    background: "#4000ffff",
+                    color: "#fff",
+                    fontSize: "0.9rem",
+                    padding: "0.375rem 1rem",
+                    border: "1px solid #0051ffff",
                   }}
                 >
                   <i className="bi bi-search"></i>
                 </button>
               </div>
             </form>
-            
-            <div className="d-flex gap-2">
-              <Link 
-                href="/register" 
-                className="btn" 
-                style={{
-                  borderRadius:'2rem', 
-                  background:'#ff003cff', 
-                  color:'#fff', 
-                  fontSize: '0.9rem', 
-                  padding: '0.375rem 1.25rem',
-                  boxShadow: '0 2px 5px rgba(181, 234, 215, 0.3)'
-                }}
-              >
-                สมัครสมาชิก
-              </Link>
-              
-              <Link 
-                href="/login" 
-                className="btn" 
-                style={{
-                  borderRadius:'2rem', 
-                  background:'#0d00ffff', 
-                  color:'#fff', 
-                  fontSize: '0.9rem', 
-                  padding: '0.375rem 1.25rem',
-                  boxShadow: '0 2px 5px rgba(157, 124, 216, 0.3)'
-                }}
-              >
-                เข้าสู่ระบบ
-              </Link>
 
-              <Link 
-                href="/signout" 
-                className="btn" 
+            {token ? (
+              <button
+                onClick={handleLogout}
+                className="btn"
                 style={{
-                  borderRadius:'2rem', 
-                  background:'#b700ffff', 
-                  color:'#fff', 
-                  fontSize: '0.9rem', 
-                  padding: '0.375rem 1.25rem',
-                  boxShadow: '0 2px 5px rgba(157, 124, 216, 0.3)'
+                  borderRadius: "2rem",
+                  background: "#ff6b6b",
+                  color: "#fff",
+                  fontSize: "0.9rem",
+                  padding: "0.375rem 1.25rem",
+                  boxShadow: "0 2px 5px rgba(255, 107, 107, 0.3)",
+                  whiteSpace: "nowrap",
                 }}
               >
                 ออกจากระบบ
-              </Link>
-            </div>
+              </button>
+            ) : (
+              <>
+                <Link
+                  href="/register"
+                  className="btn"
+                  style={{
+                    borderRadius: "2rem",
+                    background: "#ff0059ff",
+                    color: "#fff",
+                    fontSize: "0.9rem",
+                    padding: "0.375rem 1.25rem",
+                    boxShadow: "0 2px 5px rgba(181, 234, 215, 0.3)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  สมัครสมาชิก
+                </Link>
+
+                <Link
+                  href="/login"
+                  className="btn"
+                  style={{
+                    borderRadius: "2rem",
+                    background: "#5d00ffff",
+                    color: "#fff",
+                    fontSize: "0.9rem",
+                    padding: "0.375rem 1.25rem",
+                    boxShadow: "0 2px 5px rgba(134, 91, 209, 0.3)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  เข้าสู่ระบบ
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
