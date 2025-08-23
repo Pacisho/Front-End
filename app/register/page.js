@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import Link from "next/link";
 
 export default function Register() {
   const router = useRouter();
@@ -304,9 +305,9 @@ export default function Register() {
                   />
                   <label htmlFor="acceptTerms" className="form-check-label">
                     ยอมรับ{" "}
-                    <a href="#" className="text-decoration-none ms-1">
+                    <Link href="#" className="text-decoration-none ms-1">
                       ข้อตกลงและเงื่อนไข
-                    </a>{" "}
+                    </Link>{" "}
                     <span className="text-danger">*</span>
                   </label>
                   {submitted && errors.acceptTerms && (
@@ -335,13 +336,13 @@ export default function Register() {
               <div className="text-center mt-4">
                 <p className="text-muted">
                   มีบัญชีอยู่แล้ว?
-                  <a
+                  <Link
                     href="/login"
                     className="ms-1"
                     style={{ color: "#0000ffff" }}
                   >
                     เข้าสู่ระบบ
-                  </a>
+                  </Link>
                 </p>
               </div>
             </div>
