@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
@@ -20,11 +20,13 @@ export default function Register() {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  const token = localStorage.getItem("token");
-  if (token) {
-    router.push("/admin/users");
-    return;
-  }
+  // ✅ เช็ค token หลังจาก component mount (client side เท่านั้น)
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.push("/admin/users");
+    }
+  }, [router]);
 
   const titleOptions = [
     { value: "", label: "เลือกคำนำหน้า" },
@@ -265,11 +267,7 @@ export default function Register() {
                           className="form-check-input"
                         />
                         <label htmlFor={g} className="form-check-label">
-                          {g === "ชาย"
-                            ? "ชาย"
-                            : g === "หญิง"
-                            ? "หญิง"
-                            : "อื่นๆ"}
+                          {g}
                         </label>
                       </div>
                     ))}
