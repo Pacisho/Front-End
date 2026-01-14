@@ -9,7 +9,7 @@ export default function Home() {
 
   useEffect(() => {
     // ดึงข้อมูลจาก Backend ที่เราย้ายไปพอร์ต 5000
-    fetch('http://localhost:5000/api/menus') 
+    fetch('http://localhost:3000/api/menus') 
       .then((res) => res.json())
       .then((data) => {
         setMenus(data); // เอาข้อมูลที่ได้เก็บใส่ตัวแปร menus
