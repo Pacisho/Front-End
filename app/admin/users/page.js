@@ -95,6 +95,12 @@ export default function Page() {
 
   const handleSave = async () => {
     if (!editUser) return;
+
+    const payload = {
+      ...editUser,
+      birthday: editUser.birthday ? editUser.birthday.split("T")[0] : null,
+    };
+
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
@@ -105,7 +111,7 @@ export default function Page() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(editUser),
+          body: JSON.stringify(payload),
         }
       );
 
@@ -168,7 +174,7 @@ export default function Page() {
       {showModal && editUser && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h5 className="mb-3">แก้ไขผู้ใช้: {editUser.firstname}</h5>
+            <h5 className="mb-3">แก้ไขผู้ใช้: {editUser.fullname}</h5>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
