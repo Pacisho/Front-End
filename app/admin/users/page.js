@@ -18,8 +18,15 @@ export default function Page() {
   // Fetch users
   const getUsers = async () => {
     try {
+      const token = localStorage.getItem("token");
+
       const res = await fetch(
-        "https://backend-nextjs-virid.vercel.app/api/users"
+        "https://backend-virid-pi-24.vercel.app/api/users",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (!res.ok) {
         console.error("Failed to fetch data");
@@ -61,10 +68,14 @@ export default function Page() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          const token = localStorage.getItem("token");
           const res = await fetch(
-            `https://backend-nextjs-virid.vercel.app/api/users/${id}`,
+            `https://backend-virid-pi-24.vercel.app/api/users/${id}`,
             {
               method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             }
           );
           if (!res.ok) throw new Error("Failed to delete user");
@@ -85,14 +96,19 @@ export default function Page() {
   const handleSave = async () => {
     if (!editUser) return;
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(
-        "https://backend-nextjs-virid.vercel.app/api/users",
+        `https://backend-virid-pi-24.vercel.app/api/users/${editUser.id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(editUser),
         }
       );
+
       if (!res.ok) throw new Error("Failed to update user");
 
       Swal.fire({ icon: "success", title: "บันทึกสำเร็จ" });
@@ -125,7 +141,8 @@ export default function Page() {
                     <strong>Username:</strong> {user.username} <br />
                     <strong>Address:</strong> {user.address} <br />
                     <strong>Sex:</strong> {user.sex} <br />
-                    <strong>Birthday:</strong> {user.birthday}
+                    <strong>Birthday:</strong>{" "}
+                    {user.birthday ? user.birthday.split("T")[0] : "ไม่ระบุ"}
                   </p>
                   <div className="d-flex justify-content-between">
                     <button
@@ -165,7 +182,6 @@ export default function Page() {
                   { label: "Lastname", field: "lastname", type: "text" },
                   { label: "Username", field: "username", type: "text" },
                   { label: "Address", field: "address", type: "text" },
-                  { label: "Birthday", field: "birthday", type: "date" },
                 ].map((item) => (
                   <div className="col-12 col-md-6" key={item.field}>
                     <label className="form-label">{item.label}</label>
@@ -182,6 +198,22 @@ export default function Page() {
                     />
                   </div>
                 ))}
+                <div className="col-12 col-md-6">
+                  <label className="form-label">Birthday</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={
+                      editUser.birthday ? editUser.birthday.split("T")[0] : ""
+                    }
+                    onChange={(e) =>
+                      setEditUser({
+                        ...editUser,
+                        birthday: e.target.value,
+                      })
+                    }
+                  />
+                </div>
 
                 <div className="col-12 col-md-6">
                   <label className="form-label">Sex</label>
