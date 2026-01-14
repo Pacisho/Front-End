@@ -74,7 +74,7 @@ export default function Register() {
 
     try {
       const res = await fetch(
-        "https://backend-nextjs-virid.vercel.app/api/users",
+        "https://backend-virid-pi-24.vercel.app/api/auth/register",
         {
           method: "POST",
           headers: {
@@ -321,7 +321,8 @@ export default function Register() {
                     type="submit"
                     className="btn btn-lg py-3"
                     style={{
-                      background: "linear-gradient(135deg, #d20038ff, #42009fff)",
+                      background:
+                        "linear-gradient(135deg, #d20038ff, #42009fff)",
                       border: "none",
                       borderRadius: "12px",
                       color: "white",
